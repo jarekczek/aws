@@ -15,3 +15,7 @@ gradle-app.setting
 
 .idea
 *.iml
+in.json
+/out
+setClasspath.bat
+*.zip
