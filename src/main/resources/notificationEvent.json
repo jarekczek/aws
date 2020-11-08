@@ -1,0 +1,45 @@
+{
+  "Records": [
+    {
+      "eventVersion": "2.1",
+      "eventSource": "aws:s3",
+      "awsRegion": "eu-north-1",
+      "eventTime": "2020-11-06T18:53:50.544Z",
+      "eventName": "ObjectRestore:Completed",
+      "userIdentity": {
+        "principalId": "AmazonCustomer:AIHOD07YGNUD3"
+      },
+      "requestParameters": {
+        "sourceIPAddress": "s3.amazonaws.com"
+      },
+      "responseElements": {
+        "x-amz-request-id": "56AA0BE6E83FDBA0",
+        "x-amz-id-2": "74KHH4sg2OqUkg7BOiUkwIKHP2FJkGiiKx/ZXzNtrrBRFnBoFvtxRhJl9DlWmeQWxYIbUPiMn+ojH49UPJ0UXI8cvB2OstLU"
+      },
+      "s3": {
+        "s3SchemaVersion": "1.0",
+        "configurationId": "jarekczekbucketevent",
+        "bucket": {
+          "name": "jarekczekbucket",
+          "ownerIdentity": {
+            "principalId": "AmazonCustomer:AIHOD07YGNUD3"
+          },
+          "arn": "arn:aws:s3:::jarekczekbucket"
+        },
+        "object": {
+          "key": "instal/microsoft/MSSpeech_TTS_pl-PL_Paulina_20130830.msi",
+          "size": 6765056,
+          "eTag": "1171fcc8902ae94306917a353190faf4",
+          "versionId": "null",
+          "sequencer": "005FA03D44616490DB"
+        }
+      },
+      "glacierEventData": {
+        "restoreEventData": {
+          "lifecycleRestorationExpiryTime": "2020-11-10T00:00:00.000Z",
+          "lifecycleRestoreStorageClass": "DEEP_ARCHIVE"
+        }
+      }
+    }
+  ]
+}
