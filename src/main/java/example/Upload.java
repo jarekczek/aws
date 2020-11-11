@@ -2,7 +2,6 @@ package example;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.AbortMultipartUploadRequest;
 import com.amazonaws.services.s3.model.CompleteMultipartUploadRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadResult;
@@ -17,7 +16,6 @@ import com.amazonaws.services.s3.model.PartSummary;
 import com.amazonaws.services.s3.model.StorageClass;
 import com.amazonaws.services.s3.model.UploadPartRequest;
 import com.amazonaws.services.s3.model.UploadPartResult;
-import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,12 +27,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Upload {
@@ -73,23 +69,16 @@ public class Upload {
     UploadState uploadState = readOngoingUploadState();
     if (uploadState == null)
       uploadState = initUpload();
-    try {
-      while (true) {
-        int partNr = uploadState.etags.size() + 1;
-        PartETag etag = uploadPart(uploadState.uploadId, partNr);
-        if (etag == null)
-          break;
-        uploadState.etags.add(etag);
-      }
-      s3.completeMultipartUpload(new CompleteMultipartUploadRequest(
-        bucketName, remotePath, uploadState.uploadId, uploadState.etags));
-      log.info("upload completed");
-    } catch (Exception e) {
-      log.error("catched upload error", e);
-      s3.abortMultipartUpload(
-        new AbortMultipartUploadRequest(bucketName, remotePath, uploadState.uploadId));
-      log.info("upload aborted");
+    while (true) {
+      int partNr = uploadState.etags.size() + 1;
+      PartETag etag = uploadPart(uploadState.uploadId, partNr);
+      if (etag == null)
+        break;
+      uploadState.etags.add(etag);
     }
+    s3.completeMultipartUpload(new CompleteMultipartUploadRequest(
+      bucketName, remotePath, uploadState.uploadId, uploadState.etags));
+    log.info("upload completed");
   }
 
   private UploadState initUpload() throws Exception {
