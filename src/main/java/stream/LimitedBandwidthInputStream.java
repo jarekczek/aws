@@ -7,28 +7,28 @@ import java.util.function.Consumer;
 
 public class LimitedBandwidthInputStream extends InputStream {
   private final InputStream inputStream;
-  private final int requestedSpeedKps;
+  private final int requestedSpeedKBps;
 
   private long totalRead = 0;
   private Consumer<PerfInfo> callback;
 
   private long startTime;
 
-  public LimitedBandwidthInputStream(byte[] partBytes, int requestedSpeedKps) {
-    this(new ByteArrayInputStream(partBytes), requestedSpeedKps);
+  public LimitedBandwidthInputStream(byte[] partBytes, int requestedSpeedKBps) {
+    this(new ByteArrayInputStream(partBytes), requestedSpeedKBps);
   }
 
-  public LimitedBandwidthInputStream(byte[] partBytes, int requestedSpeedKps, Consumer<PerfInfo> callback) {
-    this(new ByteArrayInputStream(partBytes), requestedSpeedKps, callback);
+  public LimitedBandwidthInputStream(byte[] partBytes, int requestedSpeedKBps, Consumer<PerfInfo> callback) {
+    this(new ByteArrayInputStream(partBytes), requestedSpeedKBps, callback);
   }
 
-  public LimitedBandwidthInputStream(InputStream wrappedStream, int requestedSpeedKps) {
-    this(wrappedStream, requestedSpeedKps, null);
+  public LimitedBandwidthInputStream(InputStream wrappedStream, int requestedSpeedKBps) {
+    this(wrappedStream, requestedSpeedKBps, null);
   }
 
-  public LimitedBandwidthInputStream(InputStream wrappedStream, int requestedSpeedKps, Consumer<PerfInfo> callback) {
+  public LimitedBandwidthInputStream(InputStream wrappedStream, int requestedSpeedKBps, Consumer<PerfInfo> callback) {
     this.inputStream = wrappedStream;
-    this.requestedSpeedKps = requestedSpeedKps;
+    this.requestedSpeedKBps = requestedSpeedKBps;
     this.callback = callback;
   }
 
@@ -40,8 +40,8 @@ public class LimitedBandwidthInputStream extends InputStream {
 
     this.totalRead++;
 
-    double actualSpeedKps = (this.totalRead / 1024d) / (this.elapsed() / 1000d);
-    if (this.requestedSpeedKps != 0 && actualSpeedKps > this.requestedSpeedKps) {
+    double actualSpeedKBps = (this.totalRead / 1024d) / (this.elapsed() / 1000d);
+    if (this.requestedSpeedKBps != 0 && actualSpeedKBps > this.requestedSpeedKBps) {
       sleep(1);
     }
 
@@ -67,7 +67,7 @@ public class LimitedBandwidthInputStream extends InputStream {
     PerfInfo pi = new PerfInfo();
     pi.bytesRead = this.totalRead;
     pi.elapsedMillis = System.currentTimeMillis() - startTime;
-    pi.speedKbs = (pi.bytesRead / 1024d) / (pi.elapsedMillis / 1000d);
+    pi.speedKBps = (pi.bytesRead / 1024d) / (pi.elapsedMillis / 1000d);
     return pi;
   }
 

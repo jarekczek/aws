@@ -3,10 +3,10 @@ package stream;
 public class PerfInfo {
   public long bytesRead;
   public long elapsedMillis;
-  public double speedKbs;
+  public double speedKBps;
 
   public String toString() {
-    return "speed [kps]: " + speedKbs +
+    return "speed [kBps]: " + speedKBps +
       " (" + (bytesRead / 1024) + " / " + (elapsedMillis / 1000) + ")";
   }
 

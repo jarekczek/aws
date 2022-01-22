@@ -3,20 +3,19 @@ package stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 public class TestPerfStream extends InputStream {
   private static Logger log = LoggerFactory.getLogger(TestPerfStream.class);
 
-  private int speedKps;
+  private int speedKBps;
   private int lengthK;
 
   private long bytesRead;
   private long startTime;
 
-  public TestPerfStream(int lengthK, int speedKps) {
-    this.speedKps = speedKps;
+  public TestPerfStream(int lengthK, int speedKBps) {
+    this.speedKBps = speedKBps;
     this.lengthK = lengthK;
   }
 
@@ -29,7 +28,7 @@ public class TestPerfStream extends InputStream {
 
     //This is not very accurate, just an approximation.
     //Simulating a stream that is not immediate.
-    if (bytesRead % (speedKps * 20 / 10) == 0) {
+    if (bytesRead % (speedKBps * 20 / 10) == 0) {
       try {
         Thread.sleep(1);
       } catch (InterruptedException e) {
@@ -42,14 +41,14 @@ public class TestPerfStream extends InputStream {
     }
 
     if (bytesRead % (1024 * 1024) == 0) {
-      log.debug("speed [kps]: {} ({} / {})", actualSpeedKps(),
+      log.debug("speed [kBps]: {} ({} / {})", actualSpeedKBps(),
         bytesRead / 1024, elapsed() / 1000);
     }
 
     return 0;
   }
 
-  private double actualSpeedKps() {
+  private double actualSpeedKBps() {
     return (bytesRead / 1024d) / (elapsed() / 1000d);
   }
 

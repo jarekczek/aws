@@ -130,9 +130,9 @@ public class Upload {
       log.info("part is empty");
       return null;
     }
-    int speedLimit = Integer.parseInt(System.getProperty("jarek.max_bandwidth", "0"));
+    int speedLimitKBs = Integer.parseInt(System.getProperty("jarek.max_bandwidth", "0"));
     uploadPartRequest.setInputStream(new LimitedBandwidthInputStream(
-      partBytes, speedLimit, streamCallback()));
+      partBytes, speedLimitKBs, streamCallback()));
     uploadPartRequest.setPartSize(partBytes.length);
     String hash = md5sumBase64(partBytes);
     uploadPartRequest.setMd5Digest(hash);
@@ -144,7 +144,11 @@ public class Upload {
   private Consumer<PerfInfo> streamCallback() {
     return (pi -> {
       if (pi.bytesRead % (1024*1024) == 0) {
-        System.out.print(pi.toString() + ", ");
+        if (System.getProperty("jarek.max_bandwidth") == null) {
+          System.out.print(pi.toString() + ", ");
+        } else {
+          System.out.print(".");
+        }
       }
     });
   }
