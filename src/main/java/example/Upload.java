@@ -18,8 +18,9 @@ import com.amazonaws.services.s3.model.UploadPartRequest;
 import com.amazonaws.services.s3.model.UploadPartResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import stream.LimitedBandwidthInputStream;
+import stream.PerfInfo;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -32,6 +33,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class Upload {
   String localPath;
@@ -128,12 +130,23 @@ public class Upload {
       log.info("part is empty");
       return null;
     }
-    uploadPartRequest.setInputStream(new ByteArrayInputStream(partBytes));
+    int speedLimit = Integer.parseInt(System.getProperty("jarek.max_bandwidth", "0"));
+    uploadPartRequest.setInputStream(new LimitedBandwidthInputStream(
+      partBytes, speedLimit, streamCallback()));
     uploadPartRequest.setPartSize(partBytes.length);
     String hash = md5sumBase64(partBytes);
     uploadPartRequest.setMd5Digest(hash);
     UploadPartResult partResult = s3.uploadPart(uploadPartRequest);
+    System.out.println();
     return partResult.getPartETag();
+  }
+
+  private Consumer<PerfInfo> streamCallback() {
+    return (pi -> {
+      if (pi.bytesRead % (1024*1024) == 0) {
+        System.out.print(pi.toString() + ", ");
+      }
+    });
   }
 
   private String md5sum(byte[] partBytes) throws NoSuchAlgorithmException {
@@ -150,7 +163,6 @@ public class Upload {
 
   private byte[] getPartBytes(int partNr) throws IOException {
     byte[] buf = new byte[partSize];
-    File file = new File(localPath);
     try (FileInputStream str = new FileInputStream(localPath)) {
       int bytesRead;
       str.skip(partSize * (partNr - 1));
