@@ -169,7 +169,7 @@ public class Upload {
     byte[] buf = new byte[partSize];
     try (FileInputStream str = new FileInputStream(localPath)) {
       int bytesRead;
-      str.skip(partSize * (partNr - 1));
+      ignoreTheResult(str.skip((long)partSize * (partNr - 1)));
       bytesRead = str.read(buf, 0, partSize);
       if (bytesRead <= 0)
         return new byte[0];
@@ -178,5 +178,8 @@ public class Upload {
       else
         return Arrays.copyOfRange(buf, 0, bytesRead);
     }
+  }
+
+  private void ignoreTheResult(long skip) {
   }
 }
