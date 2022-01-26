@@ -19,16 +19,17 @@ repositories {
 }
 
 dependencies {
-  implementation 'org.apache.logging.log4j:log4j-api:2.11.0'
-  implementation 'org.apache.logging.log4j:log4j-api:2.11.0:sources'
-  implementation 'org.apache.logging.log4j:log4j-core:2.11.0'
-  implementation 'org.apache.logging.log4j:log4j-core:2.11.0:sources'
+  implementation 'org.apache.logging.log4j:log4j-api:2.17.0'
+  implementation 'org.apache.logging.log4j:log4j-api:2.17.0:sources'
+  implementation 'org.apache.logging.log4j:log4j-core:2.17.0'
+  implementation 'org.apache.logging.log4j:log4j-core:2.17.0:sources'
   implementation 'org.slf4j:slf4j-api:1.7.30'
   implementation 'ch.qos.logback:logback-classic:1.2.3'
   implementation 'ch.qos.logback:logback-core:1.2.3'
   implementation 'com.amazonaws:aws-lambda-java-core:1.2.1'
   implementation 'com.amazonaws:aws-lambda-java-events:2.2.9'
   implementation 'com.amazonaws:aws-java-sdk-s3:1.11.578'
+  implementation 'commons-codec:commons-codec:1.15'
 	testImplementation 'junit:junit:4.12'
   testImplementation 'junit-addons:junit-addons:1.4'
   testImplementation 'org.assertj:assertj-core:3.7.0'
