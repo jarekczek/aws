@@ -8,6 +8,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.digest.DigestUtils;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -36,9 +37,12 @@ public class Hello {
     System.out.println("objectKey: " + objectKey);
     AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();
     S3Object file = s3.getObject(BUCKET_NAME, objectKey);
-    String result = DigestUtils.md5Hex(file.getObjectContent());
-    System.out.println(result);
-    return result;
+    InputStream rawStream = file.getObjectContent();
+    try (InputStream bufferedStream = new BufferedInputStream(rawStream)) {
+      String result = DigestUtils.md5Hex(bufferedStream);
+      System.out.println(result);
+      return result;
+    }
   }
   
   private static Object extractNotificationKey(Object event) {
@@ -102,8 +106,8 @@ public class Hello {
   public static void main(String[] args) throws Exception {
     InputStream str = new FileInputStream("C:\\backup\\toshiba_c660\\verified\\drajwery.zip");
     long t0 = System.currentTimeMillis();
-    //System.out.println(DigestUtils.md5Hex(str));
-    System.out.println(Utils.md5hash(str));
+    System.out.println(DigestUtils.md5Hex(new BufferedInputStream(str)));
+    //System.out.println(Utils.md5hash(str));
     System.out.println(System.currentTimeMillis() - t0);
     str.close();
     if (true) {
