@@ -25,16 +25,17 @@ public class Utils {
   }
 
   public static String md5hash(InputStream rawInputStream) throws NoSuchAlgorithmException, IOException {
-    MessageDigest md = MessageDigest.getInstance("MD5");
-    BufferedInputStream inputStream = new BufferedInputStream(rawInputStream);
-    while (true) {
-      int a = inputStream.read();
-      if (a < 0)
-        break;
-      md.update((byte)a);
+    try (BufferedInputStream inputStream = new BufferedInputStream(rawInputStream)) {
+      MessageDigest md = MessageDigest.getInstance("MD5");
+      byte[] buf = new byte[1000000];
+      while (true) {
+        int c = inputStream.read(buf);
+        if (c < 0)
+          break;
+        md.update(buf, 0, c);
+      }
+      byte[] digest = md.digest();
+      return Utils.toHexString(digest);
     }
-    byte[] digest = md.digest();
-    inputStream.close();
-    return Utils.toHexString(digest);
   }
 }

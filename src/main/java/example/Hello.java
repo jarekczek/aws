@@ -34,15 +34,13 @@ public class Hello {
     Object notificationKey = extractNotificationKey(event);
     if (notificationKey != null)
       objectKey = notificationKey.toString();
-    System.out.println("objectKey: " + objectKey);
+    System.out.println("objectKey v: " + objectKey);
     AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();
     S3Object file = s3.getObject(BUCKET_NAME, objectKey);
     InputStream rawStream = file.getObjectContent();
-    try (InputStream bufferedStream = new BufferedInputStream(rawStream)) {
-      String result = DigestUtils.md5Hex(bufferedStream);
-      System.out.println(result);
-      return result;
-    }
+    String result = Utils.md5hash(rawStream);
+    System.out.println(result);
+    return result;
   }
   
   private static Object extractNotificationKey(Object event) {
