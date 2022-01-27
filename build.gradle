@@ -68,3 +68,9 @@ task cp {
     sourceSets.main.runtimeClasspath.each { println("set classpath=%classpath%;$it") }
   }
 }
+
+task copyDeps(type: Copy, group: 'jarek') {
+  configurations.each { println(it) }
+  from configurations.compileClasspath.files
+  into 'build/deps'
+}
